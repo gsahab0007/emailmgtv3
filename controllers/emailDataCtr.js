@@ -338,7 +338,7 @@ emailForCopyGetCtr = async (req, res) => {
 
         // ---------
 
-        let pvtTotEmails = pvtClgCount1 + pvtClgCount2 + pvtClgCount3 + pvtClgCount4 + pvtClgCount5 + pvtClgCount6 + pvtClgCount7 + pvtClgCount8 + pvtClgCount9 + countGovt;
+        let pvtTotEmails = pvtClgCount1 + pvtClgCount2 + pvtClgCount3 + pvtClgCount4 + pvtClgCount5 + pvtClgCount6 + pvtClgCount7 + pvtClgCount8 + pvtClgCount9;
 
         let totalEmails = depttTotEmails + countNCRC + countConstituent + pvtTotEmails + countOthers + countGovt;
 
@@ -395,7 +395,7 @@ emailForCopyGetCtr = async (req, res) => {
 // -------------------- GET for 50 50 email slot for copy paste ----------------------
 email50GetCtr = async (req, res) => {
     let arr = [];
-    let a = await emailDataModel.find({ "type": { $ne: "others" } }, { email1: 1, email2: 1, email3: 1 }).sort({ "type": 1, "clg_code": 1 });
+    let a = await emailDataModel.find({ "type": { $ne: "Others" } }, { email1: 1, email2: 1, email3: 1 }).sort({ "type": 1, "clg_code": 1 });
 
     a.forEach(function (item1) {
         if (item1.email1 != "") {
