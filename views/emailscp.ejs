@@ -124,6 +124,17 @@
       <textarea readonly class="<%=css_textArea%>" name="" id="tBstrOthers" cols="290" rows="3"><%= strOthers %></textarea>
     </div>
 
+
+    <!-- examination sets -->
+    <div class="pb-10 bg-orange-300">
+      <p class="<%=cssP_heading%>">Examination Sets</p>
+      <p class="<%=css_emailcount%>">Emails Count: <%=countEsets%> </p>
+
+      <input type="checkbox" id="cBstrEsets" class="<%=css_chkbox%>">
+      <button onclick="copyFunc('tBstrEsets','cBstrEsets')" class="<%=css_btn%>">Copy Text</button>
+      <textarea readonly class="<%=css_textArea%>" name="" id="tBstrEsets" cols="290" rows="3"><%= strEsets %></textarea>
+    </div>
+
     <!-- govt -->
     <div class="pb-10 bg-orange-300">
       <p class="<%=cssP_heading%>">Govt Colleges</p>

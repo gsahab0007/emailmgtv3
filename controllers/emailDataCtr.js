@@ -296,7 +296,6 @@ emailForCopyGetCtr = async (req, res) => {
 
         var strOthers = "";
         var countOthers = 0;
-        // console.log("len:", data5);
 
         if (data5) {
             data5.forEach(function (item3) {
@@ -310,20 +309,44 @@ emailForCopyGetCtr = async (req, res) => {
 
 
 
+        
+        // examination sets
+        const data6 = await emailDataModel.find(
+            { type: "esets" },
+            { email1: 1, email2: 1, email3: 1, _id: 0 }
+        ).sort({ clg_code: 1 });
+
+        var strEsets = "";
+        var countEsets = 0;
+
+        if (data6) {
+            data6.forEach(function (item4) {
+                strEsets = strEsets + item4.email1 + ", " + item4.email2 + ", " + item4.email3 + ", ";
+            });
+            strEsets = strEsets.replace(/ ,/g, "");
+
+            countEsets = strEsets.match(/@/g);
+            countEsets = countEsets === null ? 0 : countEsets.length;
+        }
+
+
+
+
+
+
         //---------------------------------------------
         // Govt clgs
-        const data6 = await emailDataModel.find(
+        const data7 = await emailDataModel.find(
             { type: "govt" },
             { email1: 1, email2: 1, email3: 1, _id: 0 }
         ).sort({ clg_code: 1 });
 
         var strGovt = "";
         var countGovt = 0;
-        // console.log("len:", data6);
 
-        if (data6) {
-            data6.forEach(function (item3) {
-                strGovt = strGovt + item3.email1 + ", " + item3.email2 + ", " + item3.email3 + ", ";
+        if (data7) {
+            data7.forEach(function (item5) {
+                strGovt = strGovt + item5.email1 + ", " + item5.email2 + ", " + item5.email3 + ", ";
             });
             strGovt = strGovt.replace(/ ,/g, "");
 
@@ -340,7 +363,7 @@ emailForCopyGetCtr = async (req, res) => {
 
         let pvtTotEmails = pvtClgCount1 + pvtClgCount2 + pvtClgCount3 + pvtClgCount4 + pvtClgCount5 + pvtClgCount6 + pvtClgCount7 + pvtClgCount8 + pvtClgCount9;
 
-        let totalEmails = depttTotEmails + countNCRC + countConstituent + pvtTotEmails + countOthers + countGovt;
+        let totalEmails = depttTotEmails + countNCRC + countConstituent + pvtTotEmails + countOthers + countGovt + countEsets;
 
         // console.log(emailDeptt);
         res.status(200).render("emailscp", {
@@ -381,6 +404,9 @@ emailForCopyGetCtr = async (req, res) => {
             strOthers,
             countOthers,
 
+            strEsets,
+            countEsets,
+
             strGovt,
             countGovt,
 
@@ -395,7 +421,7 @@ emailForCopyGetCtr = async (req, res) => {
 // -------------------- GET for 50 50 email slot for copy paste ----------------------
 email50GetCtr = async (req, res) => {
     let arr = [];
-    let a = await emailDataModel.find({ "type": { $ne: "Others" } }, { email1: 1, email2: 1, email3: 1 }).sort({ "type": 1, "clg_code": 1 });
+    let a = await emailDataModel.find({ "type": { $nin: ["Others", "esets"] } }, { email1: 1, email2: 1, email3: 1 }).sort({ "type": 1, "clg_code": 1 });
 
     a.forEach(function (item1) {
         if (item1.email1 != "") {
