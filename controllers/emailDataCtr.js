@@ -482,6 +482,20 @@ email50GetCtr = async (req, res) => {
     res.status(200).render('email50', { title: "Email Slots 50", totalEmails, emailSlot1, emailSlot2, emailSlot3, emailSlot4, emailSlot5, emailSlot6, emailSlot7, emailSlot8, emailSlot9, emailSlot10, emailSlot11, emailSlot12 });
 }
 
+// ------------------------ GET show single type clg -------------------------
+showSingleClgTypeGetCtr = async (req, res) => {
+    try {
+        console.log("req.query: ", req.query);
+        const data = await emailDataModel.find({"type": req.query.type}).sort({ "clg_code": 1 });
+        res.status(200).render("showsingleclgtype", { data, title: "Single College Type",clgType: req.query.type, message: req.flash("message") });
+        console.log(JSON.stringify(data, null, 2));
+
+    } catch (error) {
+        console.log("error: ", error.message);
+    }
+};
 
 
-module.exports = { showallGetCtr, addClgGetCtr, addClgPostCtr, emailForCopyGetCtr, email50GetCtr, editClgGetCtr, editClgPostCtr, delClgGetCtr, delClgDelCtr };
+
+
+module.exports = { showallGetCtr, addClgGetCtr, addClgPostCtr, emailForCopyGetCtr, email50GetCtr, editClgGetCtr, editClgPostCtr, delClgGetCtr, delClgDelCtr, showSingleClgTypeGetCtr };

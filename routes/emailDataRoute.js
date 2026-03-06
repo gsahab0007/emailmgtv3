@@ -1,10 +1,12 @@
 const express = require('express');
-const { showallGetCtr, addClgGetCtr, addClgPostCtr, emailForCopyGetCtr, email50GetCtr, editClgGetCtr, editClgPostCtr, delClgGetCtr, delClgDelCtr } = require('../controllers/emailDataCtr');
+const { showallGetCtr, addClgGetCtr, addClgPostCtr, emailForCopyGetCtr, email50GetCtr, editClgGetCtr, editClgPostCtr, delClgGetCtr, delClgDelCtr, showSingleClgTypeGetCtr } = require('../controllers/emailDataCtr');
 const router2 = express.Router();
 const { isLogin, isLogout } = require('../config/auth');
 
 
 router2.get('/showall', isLogin, showallGetCtr);
+
+router2.get('/showsingleclgtype', isLogin, showSingleClgTypeGetCtr);
 
 router2.get('/addclg', isLogin, addClgGetCtr);
 router2.post('/addclg', isLogin, addClgPostCtr);
