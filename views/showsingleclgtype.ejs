@@ -6,21 +6,26 @@
 
   <div>
 
-    <%=clgType%>
+    
+
+
+    <pre>        Total Emails: <%=data.length%> </pre>
+    <pre>        Type: <%=clgType%>  </pre>       
+
+
 
     
 
 
     <form action="/api/show/showsingleclgtype" method="GET"> 
-    <select name="type" id=""
+    <pre>        <select name="type" id=""
                   class="border-2 border-gray-400 rounded-lg my-1 px-3  mx-5  w-96 h-8 bg-gray-100"
 
                   value="">
-                  
-                  <option value="" disabled selected>
-                    Select College Type
-                  </option>
-
+                  <option value="" disabled selected>  Select College Type </option>
+                                               
+                            
+                   
                   <!-- <option value="deptts">Department</option> -->
 
                    <!-- <%=data.type%> -->
@@ -34,13 +39,10 @@
                   <option value="esets">Exam Sets</option>
                   <option value="Others">Others</option>
 
-                </select>
-
+                </select></pre>
                 <div class="text-gray-50">
-                <input type="submit" value="Submit"
-                  class=" px-3 py-2 cursor-pointer bg-blue-500 w-24 rounded justify-center  ">
+                  <pre>          <input type="submit" value="Submit" class=" px-3 py-2 cursor-pointer bg-blue-500 w-24 rounded justify-center  "></pre>
               </div>
-
               </form>
 
   </div>

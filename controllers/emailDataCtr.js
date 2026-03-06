@@ -485,10 +485,8 @@ email50GetCtr = async (req, res) => {
 // ------------------------ GET show single type clg -------------------------
 showSingleClgTypeGetCtr = async (req, res) => {
     try {
-        console.log("req.query: ", req.query);
         const data = await emailDataModel.find({"type": req.query.type}).sort({ "clg_code": 1 });
         res.status(200).render("showsingleclgtype", { data, title: "Single College Type",clgType: req.query.type, message: req.flash("message") });
-        console.log(JSON.stringify(data, null, 2));
 
     } catch (error) {
         console.log("error: ", error.message);
