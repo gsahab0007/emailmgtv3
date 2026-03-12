@@ -5,7 +5,25 @@ const flash = require('connect-flash');
 showallGetCtr = async (req, res) => {
     try {
         const data = await emailDataModel.find({}).sort({ "type": 1, "clg_code": 1 });
-        res.status(200).render("showall", { data, title: "All Records", message: req.flash("message") });
+
+
+        let arr = [];
+        data.forEach(function (item1) {
+        if (item1.email1 != "") {
+            arr.push(item1.email1)
+        }
+        if (item1.email2 != "") {
+            arr.push(item1.email2)
+        }
+        if (item1.email3 != "") {
+            arr.push(item1.email3)
+        }
+    });
+
+        // console.log("data: ", data[0].email1);
+        // console.log("arr: ", arr.length);
+
+        res.status(200).render("showall", { data, title: "All Records", message: req.flash("message"), arrLength: arr.length });
     } catch (error) {
         console.log("error: ", error.message);
     }
@@ -133,233 +151,217 @@ emailForCopyGetCtr = async (req, res) => {
             { email1: 1, email2: 1, email3: 1, _id: 0 }
         ).sort({ clg_code: 1 });
 
-        let emailDeptt1 = "";
-        let emailDeptt2 = "";
-        let emailDeptt3 = "";
-
-        deptt.forEach(function (item, i) {
-            i = i + 1;
-            if (i <= 25) {
-                emailDeptt1 = emailDeptt1 + item.email1 + ", " + item.email2 + ", " + item.email3 + ", ";
-            }
-            if (i >= 26 && i <= 50) {
-                emailDeptt2 = emailDeptt2 + item.email1 + ", " + item.email2 + ", " + item.email3 + ", ";
-            }
-            if (i >= 51 && i <= 75) {
-                emailDeptt3 = emailDeptt3 + item.email1 + ", " + item.email2 + ", " + item.email3 + ", ";
-            }
-        });
-        let depttStr1 = emailDeptt1.replace(/ ,/g, "");
-        let depttStr2 = emailDeptt2.replace(/ ,/g, "");
-        let depttStr3 = emailDeptt3.replace(/ ,/g, "");
-
-        let depttCount1 = depttStr1.match(/@/g);
-        depttCount1 = depttCount1 === null ? 0 : depttCount1.length;
-
-        let depttCount2 = depttStr2.match(/@/g);
-        depttCount2 = depttCount2 === null ? 0 : depttCount2.length;
-
-        let depttCount3 = depttStr3.match(/@/g);
-        depttCount3 = depttCount3 === null ? 0 : depttCount3.length;
+        // -------------------Push code----------------------------
+         let ar = [];        
+        deptt.forEach(function (item1) {
+        if (item1.email1 != "") {            
+            ar.push(item1.email1.trim().toLowerCase());
+        }
+        if (item1.email2 != "") {
+            ar.push(item1.email2.trim().toLowerCase());
+        }
+        if (item1.email3 != "") {
+            ar.push(item1.email3.trim().toLowerCase());
+        }
+    });
 
 
+    // Remove duplicate emails
+    let uniqueEmails = [...new Set(ar)];
+    let duplicates = ar.filter((item, index) => ar.indexOf(item) !== index);    
+    
+//for count show 
+    let depttCount1 = uniqueEmails.slice(0, 45).length;
+    let depttCount2 = uniqueEmails.slice(45, 85).length;
+    let depttCount3 = uniqueEmails.slice(85, 125).length;
 
-        let depttTotEmails = depttCount1 + depttCount2 + depttCount3;
+// for string show with comma
+    let depttStr1 = uniqueEmails.slice(0, 45).join(", ");
+    let depttStr2 = uniqueEmails.slice(45, 85).join(", ");
+    let depttStr3 = uniqueEmails.slice(85, 125).join(", ");
+
+
+        let depttTotEmails = depttCount1 + depttCount2 + depttCount3 ;
 
         // neighbourhood regional
         const data2 = await emailDataModel.find(
             { type: "NCRC" },
             { email1: 1, email2: 1, email3: 1, _id: 0 }
         ).sort({ clg_code: 1 });
+        
+         let ar1 = [];        
+        data2.forEach(function (item1) {
+        if (item1.email1 != "") {            
+            ar1.push(item1.email1.trim().toLowerCase());
+        }
+        if (item1.email2 != "") {
+            ar1.push(item1.email2.trim().toLowerCase());
+        }
+        if (item1.email3 != "") {
+            ar1.push(item1.email3.trim().toLowerCase());
+        }        
+    });
 
-        let emailNCRC = "";
-        data2.forEach(function (item, i) {
-            emailNCRC = emailNCRC + item.email1 + ", " + item.email2 + ", " + item.email3 + ", ";
-        });
-        let strNCRC = emailNCRC.replace(/ ,/g, "");
-        let countNCRC = strNCRC.match(/@/g);
-        countNCRC = countNCRC === null ? 0 : countNCRC.length;
+        let uniqueNCRCEmails = [...new Set(ar1)];   
+        let duplicatesNCRC = ar1.filter((item, index) => ar1.indexOf(item) !== index);
 
-        // constituent
+        // for count
+        let countNCRC = uniqueNCRCEmails.length;
+
+        // for string show with comma
+        let strNCRC = uniqueNCRCEmails.join(", ");
+
+
+        //------------------------------------------------- constituent--------------------------
+
         const data3 = await emailDataModel.find(
             { type: "Constituent" },
             { email1: 1, email2: 1, email3: 1, _id: 0 }
         ).sort({ clg_code: 1 });
+
         let constituent = "";
-        data3.forEach(function (item, i) {
-            constituent = constituent + item.email1 + ", " + item.email2 + ", " + item.email3 + ", ";
-        });
-        let strConstituent = constituent.replace(/ ,/g, "");
-        let countConstituent = strConstituent.match(/@/g);
-        countConstituent = countConstituent === null ? 0 : countConstituent.length;
+
+        let ar2 = [];
+        data3.forEach(function (item1) {
+        if (item1.email1 != "") {
+            ar2.push(item1.email1.trim().toLowerCase());
+        }   
+        if (item1.email2 != "") {
+            ar2.push(item1.email2.trim().toLowerCase());
+        }   
+        if (item1.email3 != "") {
+            ar2.push(item1.email3.trim().toLowerCase());
+        }
+    });
+
+        let uniqueConstituentEmails = [...new Set(ar2)];
+        let duplicatesConstituent = ar2.filter((item, index) => ar2.indexOf(item) !== index);
+
+        let strConstituent = uniqueConstituentEmails.join(", ");
+        let countConstituent = uniqueConstituentEmails.length;
 
         // Pvt clg
         const data4 = await emailDataModel.find(
             { $or: [{ type: "Pvt" }, { type: "pvt" }] },
             { email1: 1, email2: 1, email3: 1, _id: 0 }
         ).sort({ clg_code: 1 });
+        
+        let ar3 = [];
+        data4.forEach(function (item1) {
+        if (item1.email1 != "") {
+            ar3.push(item1.email1.trim().toLowerCase());
+        }   
+        if (item1.email2 != "") {
+            ar3.push(item1.email2.trim().toLowerCase());
+        }
+        if (item1.email3 != "") {
+            ar3.push(item1.email3.trim().toLowerCase());
+        }
+    });
 
-        let emailPvtClg1 = "";
-        let emailPvtClg2 = "";
-        let emailPvtClg3 = "";
-        let emailPvtClg4 = "";
-        let emailPvtClg5 = "";
-        let emailPvtClg6 = "";
-        let emailPvtClg7 = "";
-        let emailPvtClg8 = "";
-        let emailPvtClg9 = "";
+         // Remove duplicate emails
+         let uniquePvtClgEmails = [...new Set(ar3)];
+         let duplicatesPvtClg = ar3.filter((item, index) => ar3.indexOf(item) !== index);
+       
+        // for count show
+        let pvtClgCount1 = uniquePvtClgEmails.slice(0, 50).length;
+        let pvtClgCount2 = uniquePvtClgEmails.slice(50, 100).length;
+        let pvtClgCount3 = uniquePvtClgEmails.slice(100, 150).length;
+        let pvtClgCount4 = uniquePvtClgEmails.slice(150, 200).length;
+        let pvtClgCount5 = uniquePvtClgEmails.slice(200, 250).length;
+        let pvtClgCount6 = uniquePvtClgEmails.slice(250, 300).length;
+        let pvtClgCount7 = uniquePvtClgEmails.slice(300, 350).length;
+        let pvtClgCount8 = uniquePvtClgEmails.slice(350, 400).length;
+        let pvtClgCount9 = uniquePvtClgEmails.slice(400, 450).length;
 
-        let arr = [];
-        let str = "";
-        data4.forEach(function (item, i) {
-            str = str + item.email1 + ", " + item.email2 + ", " + item.email3 + ", ";
-        });
+         // for string show with comma        
+        let emailPvtClg1 = uniquePvtClgEmails.slice(0, 50).join(", ");
+        let emailPvtClg2 = uniquePvtClgEmails.slice(50, 100).join(", ");
+        let emailPvtClg3 = uniquePvtClgEmails.slice(100, 150).join(", ");
+        let emailPvtClg4 = uniquePvtClgEmails.slice(150, 200).join(", ");
+        let emailPvtClg5 = uniquePvtClgEmails.slice(200, 250).join(", ");
+        let emailPvtClg6 = uniquePvtClgEmails.slice(250, 300).join(", ");
+        let emailPvtClg7 = uniquePvtClgEmails.slice(300, 350).join(", ");
+        let emailPvtClg8 = uniquePvtClgEmails.slice(350, 400).join(", ");
+        let emailPvtClg9 = uniquePvtClgEmails.slice(400, 450).join(", ");
 
-        str = str.replace(/ ,/g, "");
-        str = str.trimEnd();
-        arr = str.split(", ");
-
-        arr.forEach(function (item2, i) {
-            i = i + 1;
-            if (i <= 50) {
-                emailPvtClg1 = emailPvtClg1 + item2 + ", ";
-            }
-            if (i > 50 && i <= 100) {
-                emailPvtClg2 = emailPvtClg2 + item2 + ", ";
-            }
-            if (i > 100 && i <= 150) {
-                emailPvtClg3 = emailPvtClg3 + item2 + ", ";
-            }
-            if (i > 150 && i <= 200) {
-                emailPvtClg4 = emailPvtClg4 + item2 + ", ";
-            }
-            if (i > 200 && i <= 250) {
-                emailPvtClg5 = emailPvtClg5 + item2 + ", ";
-            }
-            if (i > 250 && i <= 300) {
-                emailPvtClg6 = emailPvtClg6 + item2 + ", ";
-            }
-            if (i > 300 && i <= 350) {
-                emailPvtClg7 = emailPvtClg7 + item2 + ", ";
-            }
-            if (i > 350 && i <= 400) {
-                emailPvtClg8 = emailPvtClg8 + item2 + ", ";
-            }
-            if (i > 400 && i <= 450) {
-                emailPvtClg9 = emailPvtClg9 + item2 + ", ";
-            }
-        });
-
-        emailPvtClg1 = emailPvtClg1.trimEnd();
-        emailPvtClg2 = emailPvtClg2.trimEnd();
-        emailPvtClg3 = emailPvtClg3.trimEnd();
-        emailPvtClg4 = emailPvtClg4.trimEnd();
-        emailPvtClg5 = emailPvtClg5.trimEnd();
-        emailPvtClg6 = emailPvtClg6.trimEnd();
-        emailPvtClg7 = emailPvtClg7.trimEnd();
-        emailPvtClg8 = emailPvtClg8.trimEnd();
-        emailPvtClg9 = emailPvtClg9.trimEnd();
-
-        var pvtClgCount1 = emailPvtClg1.match(/@/g);
-        pvtClgCount1 = pvtClgCount1 === null ? 0 : pvtClgCount1.length;
-
-        var pvtClgCount2 = emailPvtClg2.match(/@/g);
-        pvtClgCount2 = pvtClgCount2 === null ? 0 : pvtClgCount2.length;
-
-        var pvtClgCount3 = emailPvtClg3.match(/@/g);
-        pvtClgCount3 = pvtClgCount3 === null ? 0 : pvtClgCount3.length;
-
-        var pvtClgCount4 = emailPvtClg4.match(/@/g);
-        pvtClgCount4 = pvtClgCount4 === null ? 0 : pvtClgCount4.length;
-
-        var pvtClgCount5 = emailPvtClg5.match(/@/g);
-        pvtClgCount5 = pvtClgCount5 === null ? 0 : pvtClgCount5.length;
-
-        var pvtClgCount6 = emailPvtClg6.match(/@/g);
-        pvtClgCount6 = pvtClgCount6 === null ? 0 : pvtClgCount6.length;
-
-        var pvtClgCount7 = emailPvtClg7.match(/@/g);
-        pvtClgCount7 = pvtClgCount7 === null ? 0 : pvtClgCount7.length;
-
-        var pvtClgCount8 = emailPvtClg8.match(/@/g);
-        pvtClgCount8 = pvtClgCount8 === null ? 0 : pvtClgCount8.length;
-
-        var pvtClgCount9 = emailPvtClg9.match(/@/g);
-        pvtClgCount9 = pvtClgCount9 === null ? 0 : pvtClgCount9.length;
-
-
-        // others
+        // -----------------------------------others----------------------------
         const data5 = await emailDataModel.find(
             { type: "Others" },
             { email1: 1, email2: 1, email3: 1, _id: 0 }
         ).sort({ clg_code: 1 });
 
-        var strOthers = "";
-        var countOthers = 0;
+        let ar5 = [];
+        data5.forEach(function (item1) {
+            if (item1.email1 != "") {
+                ar5.push(item1.email1.trim().toLowerCase());
+            }
+            if (item1.email2 != "") {
+                ar5.push(item1.email2.trim().toLowerCase());
+            }
+            if (item1.email3 != "") {
+                ar5.push(item1.email3.trim().toLowerCase());
+            }
+        });
+            let uniqueOthersEmails = [...new Set(ar5)];
+            let duplicatesOthers = ar5.filter((item, index) => ar5.indexOf(item) !== index);
 
-        if (data5) {
-            data5.forEach(function (item3) {
-                strOthers = strOthers + item3.email1 + ", " + item3.email2 + ", " + item3.email3 + ", ";
-            });
-            strOthers = strOthers.replace(/ ,/g, "");
-
-            countOthers = strOthers.match(/@/g);
-            countOthers = countOthers === null ? 0 : countOthers.length;
-        }
+            let countOthers = uniqueOthersEmails.length;
+            let strOthers = uniqueOthersEmails.join(", ");
 
 
-
-        
-        // examination sets
+        // ---------------examination sets-------------
         const data6 = await emailDataModel.find(
             { type: "esets" },
             { email1: 1, email2: 1, email3: 1, _id: 0 }
         ).sort({ clg_code: 1 });
 
-        var strEsets = "";
-        var countEsets = 0;
+        let ar4 = [];
+        data6.forEach(function (item1) {
+            if (item1.email1 != "") {   
+                ar4.push(item1.email1.trim().toLowerCase());
+            }
+            if (item1.email2 != "") {
+                ar4.push(item1.email2.trim().toLowerCase());
+            }
+            if (item1.email3 != "") {
+                ar4.push(item1.email3.trim().toLowerCase());
+            }
+        });
 
-        if (data6) {
-            data6.forEach(function (item4) {
-                strEsets = strEsets + item4.email1 + ", " + item4.email2 + ", " + item4.email3 + ", ";
-            });
-            strEsets = strEsets.replace(/ ,/g, "");
+        let uniqueEsetsEmails = [...new Set(ar4)];
+        let duplicatesEsets = ar4.filter((item, index) => ar4.indexOf(item) !== index);
 
-            countEsets = strEsets.match(/@/g);
-            countEsets = countEsets === null ? 0 : countEsets.length;
-        }
+        let countEsets = uniqueEsetsEmails.length;  
+        let strEsets = uniqueEsetsEmails.join(", ");
 
-
-
-
-
-
-        //---------------------------------------------
-        // Govt clgs
+        //------------------- Govt clgs-----------------
         const data7 = await emailDataModel.find(
             { type: "govt" },
             { email1: 1, email2: 1, email3: 1, _id: 0 }
         ).sort({ clg_code: 1 });
 
-        var strGovt = "";
-        var countGovt = 0;
+        let ar6 = [];
+        data7.forEach(function (item1) {
+            if (item1.email1 != "") {   
+                ar6.push(item1.email1.trim().toLowerCase());
+            }
+            if (item1.email2 != "") {
+                ar6.push(item1.email2.trim().toLowerCase());
+            }
+            if (item1.email3 != "") {
+                ar6.push(item1.email3.trim().toLowerCase());
+            }
+        });
 
-        if (data7) {
-            data7.forEach(function (item5) {
-                strGovt = strGovt + item5.email1 + ", " + item5.email2 + ", " + item5.email3 + ", ";
-            });
-            strGovt = strGovt.replace(/ ,/g, "");
+        let uniqueGovtEmails = [...new Set(ar6)];
+        let duplicatesGovt = ar6.filter((item, index) => ar6.indexOf(item) !== index);
+        
+        let countGovt = uniqueGovtEmails.length;    
+        let strGovt = uniqueGovtEmails.join(", ");
 
-            countGovt = strGovt.match(/@/g);
-            countGovt = countGovt === null ? 0 : countGovt.length;
-        }        
-
+    
         //------------End govt clgs--------------------------------- 
-
-
-
-
-        // ---------
 
         let pvtTotEmails = pvtClgCount1 + pvtClgCount2 + pvtClgCount3 + pvtClgCount4 + pvtClgCount5 + pvtClgCount6 + pvtClgCount7 + pvtClgCount8 + pvtClgCount9;
 
@@ -372,15 +374,14 @@ emailForCopyGetCtr = async (req, res) => {
             depttStr3,
             depttCount1,
             depttCount2,
-            depttCount3,
-            
+            depttCount3,         
 
             strNCRC,
             countNCRC,
 
             strConstituent,
             countConstituent,
-
+            
             emailPvtClg1,
             emailPvtClg2,
             emailPvtClg3,
@@ -423,22 +424,41 @@ email50GetCtr = async (req, res) => {
     let arr = [];
     let a = await emailDataModel.find({ "type": { $nin: ["Others", "esets"] } }, { email1: 1, email2: 1, email3: 1 }).sort({ "type": 1, "clg_code": 1 });
 
+
     a.forEach(function (item1) {
         if (item1.email1 != "") {
-            arr.push(item1.email1)
+            arr.push(item1.email1.trim().toLowerCase())
         }
         if (item1.email2 != "") {
-            arr.push(item1.email2)
+            arr.push(item1.email2.trim().toLowerCase())
         }
         if (item1.email3 != "") {
-            arr.push(item1.email3)
+            arr.push(item1.email3.trim().toLowerCase())
         }
+
     });
+
+    // Remove duplicate emails
+    let uniqueEmails = [...new Set(arr)];
+
+    const duplicates = arr.filter((item, index) => arr.indexOf(item) !== index);
+
+
+    // console.log("arr: ",  arr.slice(0, 5));
+    console.log("uniqueEmails: ", uniqueEmails.length);
+    // console.log("uniqueEmails: ",uniqueEmails);
+
+    // uniqueEmails.forEach(email => console.log(email));
+
+
+    // console.log("Duplicate emails:", [...new Set(duplicates)]);
+    // console.log("Total duplicate emails: ", duplicates.length);
+
     let totalEmails;
     let = emailSlot1 = "", emailSlot2 = "", emailSlot3 = "", emailSlot4 = "", emailSlot5 = "", emailSlot6 = "", emailSlot7 = "", emailSlot8 = "", emailSlot9 = "", emailSlot10 = "", emailSlot11 = "", emailSlot12 = "";
 
-    arr.forEach(function (item2, i) {
-        totalEmails = arr.length;
+    uniqueEmails.forEach(function (item2, i) {
+        totalEmails = uniqueEmails.length;
         i++;
         if (i <= 50) {
             emailSlot1 = emailSlot1 + item2 + ", "
@@ -479,21 +499,46 @@ email50GetCtr = async (req, res) => {
 
     })
 
-    res.status(200).render('email50', { title: "Email Slots 50", totalEmails, emailSlot1, emailSlot2, emailSlot3, emailSlot4, emailSlot5, emailSlot6, emailSlot7, emailSlot8, emailSlot9, emailSlot10, emailSlot11, emailSlot12 });
+    res.status(200).render('email50', { title: "Email Slots 50", totalEmails, emailSlot1, emailSlot2, emailSlot3, emailSlot4, emailSlot5, emailSlot6, emailSlot7, emailSlot8, emailSlot9, emailSlot10, emailSlot11, emailSlot12, duplicates });
 }
 
 // ------------------------ GET show single type clg -------------------------
 showSingleClgTypeGetCtr = async (req, res) => {
     try {
+        console.log("req.query.type: ", req.query.type);
         const data = await emailDataModel.find({"type": req.query.type}).sort({ "clg_code": 1 });
-        res.status(200).render("showsingleclgtype", { data, title: "Single College Type",clgType: req.query.type, message: req.flash("message") });
+
+       
+        let arr = [];
+        
+         data.forEach(function (item1) {
+        if (item1.email1 != "") {
+            arr.push(item1.email1.trim().toLowerCase())
+        }
+        if (item1.email2 != "") {
+            arr.push(item1.email2.trim().toLowerCase())
+        }
+        if (item1.email3 != "") {
+            arr.push(item1.email3.trim().toLowerCase())
+        }
+
+    });
+        let uniqueEmails = [...new Set(arr)];
+        let duplicates = arr.filter((item, index) => arr.indexOf(item) !== index);  
+
+        uniqueEmailsCount = uniqueEmails.length;
+        duplicatesCount = duplicates.length;
+
+        console.log("uniqueEmails: ", uniqueEmails);
+        console.log("duplicates: ", duplicates);
+    
+        res.status(200).render("showsingleclgtype", { data, title: "Single College Type",clgType: req.query.type, message: req.flash("message"), uniqueEmailsCount, duplicatesCount });
+
+
 
     } catch (error) {
         console.log("error: ", error.message);
     }
 };
-
-
-
 
 module.exports = { showallGetCtr, addClgGetCtr, addClgPostCtr, emailForCopyGetCtr, email50GetCtr, editClgGetCtr, editClgPostCtr, delClgGetCtr, delClgDelCtr, showSingleClgTypeGetCtr };
